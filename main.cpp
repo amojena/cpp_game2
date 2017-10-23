@@ -23,12 +23,16 @@ int main ()
 	doc.parse<0>(&buffer[0]);
     // Find our root node
     root_node = doc.first_node("map");
-    // Iterate over the brewerys
+    // Iterate over the rooms
     xml_node<> * room_node = root_node->first_node("room");
-    cout << room_node -> first_node("name")->value() << endl;
-    cout << room_node -> first_node("description")->value() << endl;
-    cout << room_node -> first_node("item")->value() << endl;
-    cout << room_node -> next_sibling() -> next_sibling("room") -> first_node("name") -> value() << endl;
+    xml_node<>* temp_node = room_node;
+    while (temp_node != NULL)
+    {
+        cout << temp_node -> first_node("name")->value() << endl;
+        cout << temp_node -> first_node("description")->value() << endl;
+        
+        temp_node = temp_node -> next_sibling("room");
+    }
     
     
     return 0;
