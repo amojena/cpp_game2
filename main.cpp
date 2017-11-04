@@ -35,6 +35,7 @@ int main ()
     while (room_node != NULL)
     {
         temp_node = room_node -> first_node();
+        
         while (temp_node != NULL)
         {
             cout << temp_node -> name() << ": " << temp_node-> value() << endl;
