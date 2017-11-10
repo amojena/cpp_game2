@@ -5,13 +5,13 @@
 
 class Creature{
 public:
-    Creature();
-    ~Creature();
+    Creature() {};
+    ~Creature() {};
     string name;
     string status;
     string description; 
     vector <string> vulnerability;
-    class Attack attack;
+    Attack attack;
     vector <class Trigger> trig;
 };
 

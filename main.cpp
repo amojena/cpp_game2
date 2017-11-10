@@ -1,9 +1,15 @@
 #include "rapidxml.hpp"
-#include <string.h>
+#include <string>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "Container.hpp"
+#include "Creature.hpp"
+#include "Item.hpp"
+#include "Room.hpp"
+#include "Trigger.hpp"
+#include "Main.hpp"
 
 using namespace std;
 using namespace rapidxml;
@@ -11,8 +17,6 @@ using namespace rapidxml;
 
 int main ()
 {
-    //cout << "Hello, World" << endl;
-
     xml_document<> doc;    // character type defaults to char
     xml_node<> * root_node;
 
@@ -34,7 +38,7 @@ int main ()
 
     while (room_node != NULL)
     {
-        temp_node = room_node -> first_node();
+        temp_node = room_node -> first_node(); 
         
         while (temp_node != NULL)
         {
@@ -65,8 +69,6 @@ int main ()
         cout << endl << endl;
         subtree = 0;
     }
-
-    
-    
+ 
     return 0;
 }

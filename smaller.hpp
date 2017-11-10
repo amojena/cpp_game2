@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include "rapidxml.hpp"
+using namespace rapidxml;
 using namespace std;
 
 

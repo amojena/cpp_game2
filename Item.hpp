@@ -5,8 +5,8 @@
 
 class Item{
 public:
-    Item();
-    ~Item();
+    Item() {};
+    ~Item() {};
     string name;
     string status;
     string description; //writing in the xml file

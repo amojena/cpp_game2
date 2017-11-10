@@ -5,8 +5,8 @@
 
 class Trigger{
 public:
-    Trigger();
-    ~Trigger();
+    Trigger() {};
+    ~Trigger() {};
     string command;
     string type;
     string has;
@@ -14,7 +14,7 @@ public:
     string status;
     string owner;
     string print;
-    vector <class Attack> att;
+    vector <Attack> att;
 };
 
 #endif
