@@ -34,41 +34,24 @@ int main ()
     // Iterate over the rooms
     xml_node<>* room_node = root_node->first_node("room");
     xml_node<>* temp_node = room_node -> first_node(); 
+    //Container* temp;
     int subtree = 0;
+    vector <Container*> containers;
 
     while (room_node != NULL)
     {
         temp_node = room_node -> first_node(); 
+        cout << "ROOM NAME: " << room_node -> name() << endl;
         
-        while (temp_node != NULL)
-        {
-            cout << temp_node -> name() << ": " << temp_node-> value() << endl;
-            if (! strcmp(temp_node -> value(), "") )
-            {
-                temp_node = temp_node -> first_node();
-                subtree++;
-            }
-            
-            else 
-            {
-                if(temp_node -> next_sibling() == NULL)
-                {
-                    while (subtree != 0 && temp_node -> next_sibling() == NULL)
-                    {
-                        subtree--;
-                        temp_node = temp_node -> parent();
-                    }   
-                }
-
-                temp_node = temp_node -> next_sibling();
-            }
+        if ( ! strcmp(room_node -> name(), "container")  )
+            containers.push_back(setContainer(room_node));
         
-        }
+        
     
         room_node = room_node -> next_sibling();
         cout << endl << endl;
         subtree = 0;
     }
- 
+
     return 0;
 }
