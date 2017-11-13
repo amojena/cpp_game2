@@ -14,8 +14,8 @@ public:
     string description;
     vector <string> accept;
     vector <string> itemArray;
-    vector <class Item> items;
-    vector <class Trigger> trig;
+    vector <class Item*> items;
+    vector <class Trigger*> trig;
 
     //Functions
     void setName(string _name) { name = _name; };
