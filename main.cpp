@@ -33,10 +33,12 @@ int main ()
 
     // Iterate over the rooms
     xml_node<>* room_node = root_node->first_node("room");
-    xml_node<>* temp_node = room_node -> first_node(); 
-    //Container* temp;
-    int subtree = 0;
+    xml_node<>* temp_node;
+     
     vector <Container*> containers;
+    vector <Item*> items;
+    vector <Room*> rooms;
+    vector <Creature*> creatures;
 
     while (room_node != NULL)
     {
@@ -46,12 +48,25 @@ int main ()
         if ( ! strcmp(room_node -> name(), "container")  )
             containers.push_back(setContainer(room_node));
         
+        else if ( ! strcmp(room_node -> name(), "item")  )
+            items.push_back(setItem(room_node));
         
-    
+        else if ( ! strcmp(room_node -> name(), "room")  )
+            rooms.push_back(setRoom(room_node));
+        
+        else if ( ! strcmp(room_node -> name(), "creature")  )
+            creatures.push_back(setCreature(room_node));
+                
         room_node = room_node -> next_sibling();
-        cout << endl << endl;
-        subtree = 0;
+        cout << endl;
     }
+
+    cout << "rooms: " << rooms.size() << endl;
+    cout << "items: " << items.size() << endl;
+    cout << "conts: " << containers.size() << endl;
+    cout << "creat: " << creatures.size() << endl;
+
+
 
     return 0;
 }

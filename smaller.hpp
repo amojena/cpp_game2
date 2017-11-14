@@ -25,7 +25,7 @@ struct Attack
     string object;
     string status;
     string print;
-    vector <string> updates;
+    vector <string> actions;
 };
 
 #endif
