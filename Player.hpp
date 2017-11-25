@@ -10,10 +10,10 @@ class Player{
     ~Player() {};
     Room* currentRoom;
     vector<class Item*> inventory;
-};
 
-void setRoom(Room* curr) { currentRoom = curr; };
-void setItem(Item* item) { inventory.push_back(item); };
+    void setRoom(Room* curr) { currentRoom = curr; };
+    void setItem(Item* item) { inventory.push_back(item); };    
+};
 
 
 
