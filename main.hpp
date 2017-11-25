@@ -258,6 +258,9 @@ void setRoomVectors(Room* room, vector <Item*> items, vector <Container*> conts,
     }
     for(int i = 0; i < room->containerArray.size(); i++) {
         room->cont.push_back(searchContainer(room->containerArray[i], conts));
+        for(int j = 0; j < room->cont.items.size(); j++) {
+            room->cont.items.push_back(searchItem(room->cont.items[j], items));
+        }
     }
     for(int i = 0; i < room->creatureArray.size(); i++) {
         room->creatures.push_back(searchCreature(room->creatureArray[i], creatures));
