@@ -6,7 +6,12 @@
 #include "Room.hpp"
 #include "Creature.hpp"
 #include "Item.hpp"
+#include "Player.hpp"
 #include <vector>
+#include <string>
+#include <algorithm>
+
+using namespace std;
 
 Container* setContainer(xml_node<>* highNode);
 Trigger* setTrigger(xml_node<>* highNode);
@@ -173,6 +178,10 @@ Room* setRoom(xml_node<>* highNode) //high_node -> name = room
             tempR -> trig.push_back(setTrigger(tempNode));
         }
 
+        else if(!strcmp(tempNode -> name(), "border")){
+            tempR -> borders.push_back(tempR -> setBorder(tempNode));
+        }
+
         tempNode = tempNode -> next_sibling();
     } //while
 
@@ -240,7 +249,16 @@ Item* searchItem(string name, vector <Item*> items) {
             return items[i];
         }
     }
-    return 0;
+    return NULL;
+}
+
+int searchItemIndex(Item* item, vector <Item*> items) {
+    for(int i = 0; i <= items.size(); i++) {
+        if (item == items[i]) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 Creature* searchCreature(string name, vector <Creature*> creatures) {
@@ -252,16 +270,7 @@ Creature* searchCreature(string name, vector <Creature*> creatures) {
     return 0;
 }
 
-Border* searchBorder(string name, vector <Border*> borders) {
-    for(int i = 0; i <= borders.size(); i++) {
-        if (name == borders[i]->name) {
-            return borders[i];
-        }
-    }
-    return 0;
-}
-
-void setRoomVectors(Room* room, vector <Item*> items, vector <Container*> conts, vector <Creature*> creatures) {
+void setRoomVectors(Room* room, vector <Item*> items, vector <Container*> conts, vector <Creature*> creatures, vector <Room*> rooms) {
     for(int i = 0; i < room->itemArray.size(); i++) {
         room->items.push_back(searchItem(room->itemArray[i], items));
     }
@@ -274,6 +283,104 @@ void setRoomVectors(Room* room, vector <Item*> items, vector <Container*> conts,
     for(int i = 0; i < room->creatureArray.size(); i++) {
         room->creatures.push_back(searchCreature(room->creatureArray[i], creatures));
     }
+    for(int i = 0; i < room -> borders.size(); i++) {
+        string dir = room -> borders[i].direction;
+        if (dir == "north")
+            room -> north = searchRoom(room -> borders[i].roomName, rooms);
+        if (dir == "south")
+            room -> south = searchRoom(room -> borders[i].roomName, rooms);
+        if (dir == "east")
+            room -> east = searchRoom(room -> borders[i].roomName, rooms);
+        if (dir == "west")
+            room -> west = searchRoom(room -> borders[i].roomName, rooms);
+    }
 }
 
+bool findTrigger(string input, Player* player)
+{
+    int len = input.length();
+    if (len == 1)
+    {
+        int inp = (int)input[0];
+        switch(inp)
+        {
+            case 110:
+                if (player -> currentRoom -> searchBorder("north") && player -> leaveRoom(input))
+                {
+                    //check triggers
+                    player -> currentRoom = player -> currentRoom -> north;
+                    cout << player -> currentRoom -> description << endl;
+                }
+                else if (!(player -> currentRoom -> searchBorder("north")))
+                    cout << "Can't go that way." << endl;
+                return false;
+            case 115:
+                if (player -> currentRoom -> searchBorder("south"))
+                {
+                    player -> currentRoom = player -> currentRoom -> north;
+                    cout << player -> currentRoom -> description << endl;
+                }
+                else if (!(player -> currentRoom -> searchBorder("south")))
+                    cout << "Can't go that way." << endl;
+                 return false;
+            case 101:
+                if (player -> currentRoom -> searchBorder("east"))
+                {
+                    player -> currentRoom = player -> currentRoom -> north;
+                    cout << player -> currentRoom -> description << endl;
+                }
+                else if (!(player -> currentRoom -> searchBorder("east")))
+                    cout << "Can't go that way." << endl;
+                return false;
+            case 119:
+                if (player -> currentRoom -> searchBorder("west"))
+                {
+                    player -> currentRoom = player -> currentRoom -> north;
+                    cout << player -> currentRoom -> description << endl;
+                }
+                else if (!(player -> currentRoom -> searchBorder("west")))
+                    cout << "Can't go that way." << endl;
+                return false;
+            case 105:
+                cout << "Inventory: ";
+                if (player -> inventory.size() == 0)
+                {
+                    cout << "empty" << endl;
+                }
+                else
+                {
+                    for(int i=0; i < player -> inventory.size(); i++)
+                    {
+                        cout << player -> inventory[i] -> name;
+                        if (i+1 < player -> inventory.size())
+                            cout << ", ";
+                        else
+                            cout << endl;
+                    }
+                }
+                return false;
+            default:
+                cout << "Error" << endl;
+                return false;
+        }
+    }
+    
+    if(input.find("take") != -1)
+    {
+        Item* item = searchItem(input.substr(5), player -> currentRoom -> items);
+
+        if (item != NULL)
+        {
+            player -> inventory.push_back(item);
+            player -> currentRoom -> items.erase(searchItemIndex(item, player -> currentRoom -> items));
+            cout << "Item " << item -> name << " added to inventory." << endl;
+        }
+        else
+            cout << "Error" << endl;
+        
+        return false;
+    }
+
+    return false;
+}
 #endif
