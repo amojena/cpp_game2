@@ -69,7 +69,7 @@ int main ()
         setRoomVectors(rooms[i], items, containers, creatures);
     }
 
-    cout<<rooms[1]->cont[0]->items[0]->name<<endl;
+    cout<<rooms[1]->cont[0]->name<<endl;
     cout << "rooms: " << rooms.size() << endl;
     cout << "items: " << items.size() << endl;
     cout << "conts: " << containers.size() << endl;

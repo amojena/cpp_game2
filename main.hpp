@@ -252,6 +252,15 @@ Creature* searchCreature(string name, vector <Creature*> creatures) {
     return 0;
 }
 
+Border* searchBorder(string name, vector <Border*> borders) {
+    for(int i = 0; i <= borders.size(); i++) {
+        if (name == borders[i]->name) {
+            return borders[i];
+        }
+    }
+    return 0;
+}
+
 void setRoomVectors(Room* room, vector <Item*> items, vector <Container*> conts, vector <Creature*> creatures) {
     for(int i = 0; i < room->itemArray.size(); i++) {
         room->items.push_back(searchItem(room->itemArray[i], items));
