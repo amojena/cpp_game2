@@ -14,7 +14,6 @@
 using namespace std;
 using namespace rapidxml;
 
-
 int main ()
 {
     xml_document<> doc;    // character type defaults to char
@@ -31,8 +30,8 @@ int main ()
     // Find our root node
     root_node = doc.first_node("map");
 
-    // Iterate over the rooms
-    xml_node<>* room_node = root_node->first_node("room");
+    // Iterate over the nodes
+    xml_node<>* node = root_node->first_node("room");
     xml_node<>* temp_node;
      
     vector <Container*> containers;
@@ -40,33 +39,41 @@ int main ()
     vector <Room*> rooms;
     vector <Creature*> creatures;
 
-    while (room_node != NULL)
+    while (node != NULL)
     {
-        temp_node = room_node -> first_node(); 
-        cout << "ROOM NAME: " << room_node -> name() << endl;
+        temp_node = node -> first_node(); 
+        cout << "NODE NAME: " << node -> name() << endl;
         
-        if ( ! strcmp(room_node -> name(), "container")  )
-            containers.push_back(setContainer(room_node));
+        if ( ! strcmp(node -> name(), "container")  ) {
+            containers.push_back(setContainer(node));
+        }
         
-        else if ( ! strcmp(room_node -> name(), "item")  )
-            items.push_back(setItem(room_node));
+        else if ( ! strcmp(node -> name(), "item")  )
+            items.push_back(setItem(node));
         
-        else if ( ! strcmp(room_node -> name(), "room")  )
-            rooms.push_back(setRoom(room_node));
+        else if ( ! strcmp(node -> name(), "room")  )
+            rooms.push_back(setRoom(node));
         
-        else if ( ! strcmp(room_node -> name(), "creature")  )
-            creatures.push_back(setCreature(room_node));
+        else if ( ! strcmp(node -> name(), "creature")  )
+            creatures.push_back(setCreature(node));
                 
-        room_node = room_node -> next_sibling();
+        node = node -> next_sibling();
         cout << endl;
     }
 
+    for(int i = 0; i <= containers.size(); i++) {
+        cout<<rooms[i]->name << endl;
+    }
+
+    for(int i = 0; i < rooms.size(); i++) {
+        setRoomVectors(rooms[i], items, containers, creatures);
+    }
+
+    cout<<rooms[1]->cont[0]->items[0]->name<<endl;
     cout << "rooms: " << rooms.size() << endl;
     cout << "items: " << items.size() << endl;
     cout << "conts: " << containers.size() << endl;
     cout << "creat: " << creatures.size() << endl;
-
-
-
     return 0;
 }
+
