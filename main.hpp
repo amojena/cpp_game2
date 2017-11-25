@@ -6,6 +6,7 @@
 #include "Room.hpp"
 #include "Creature.hpp"
 #include "Item.hpp"
+#include <vector>
 
 Container* setContainer(xml_node<>* highNode);
 Trigger* setTrigger(xml_node<>* highNode);
@@ -213,6 +214,51 @@ Creature* setCreature(xml_node<>* highNode)
     }//while
 
     return tempC;
+}
+
+Room* searchRoom(string name, vector <Room*> rooms) {
+    for(int i = 0; i <= rooms.size(); i++) {
+        if (name == rooms[i]->name) {
+            return rooms[i];
+        }
+    }
+    return 0;
+}
+
+Container* searchContainer(string name, vector <Container*> conts) {
+    for(int i = 0; i <= conts.size(); i++) {
+        if (name == conts[i]->name) {
+            return conts[i];
+        }
+    }
+    return 0;
+}
+
+Item* searchItem(string name, vector <Item*> items) {
+    for(int i = 0; i <= items.size(); i++) {
+        if (name == items[i]->name) {
+            return items[i];
+        }
+    }
+    return 0;
+}
+
+Creature* searchCreature(string name, vector <Creature*> creatures) {
+    for(int i = 0; i <= creatures.size(); i++) {
+        if (name == creatures[i]->name) {
+            return creatures[i];
+        }
+    }
+    return 0;
+}
+
+void setRoomVectors(Room* room, vector <Item*> items, vector <Container*> conts) {
+    for(int i = 0; i <= room->itemArray.size(); i++) {
+        room->items = push_back(searchItem(room->itemArray[i], items));
+    }
+    for(int i = 0; i <= room->containerArray.size(); i++) {
+        room->containers = push_back(searchItem(room->containerArray[i]), conts);
+    }
 }
 
 #endif
