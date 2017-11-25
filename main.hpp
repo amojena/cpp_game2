@@ -254,13 +254,13 @@ Creature* searchCreature(string name, vector <Creature*> creatures) {
 
 void setRoomVectors(Room* room, vector <Item*> items, vector <Container*> conts, vector <Creature*> creatures) {
     for(int i = 0; i <= room->itemArray.size(); i++) {
-        room->items = push_back(searchItem(room->itemArray[i], items));
+        room->items.push_back(searchItem(room->itemArray[i], items));
     }
     for(int i = 0; i <= room->containerArray.size(); i++) {
-        room->containers = push_back(searchContainer(room->containerArray[i]), conts);
+        room->cont.push_back(searchContainer(room->containerArray[i], conts));
     }
     for(int i = 0; i <= room->creatureArray.size(); i++) {
-        room->creatures = push_back(searchCreature(room->creatureArray[i]), conts);
+        room->creatures.push_back(searchCreature(room->creatureArray[i], creatures));
     }
 }
 
