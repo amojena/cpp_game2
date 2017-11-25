@@ -49,4 +49,13 @@ Border Room :: setBorder(xml_node<>* temp)
     return b;
 }
 
+bool Room :: searchBorder(string name) {
+    for(int i= 0; i < borders.size(); i++) {
+        if(borders[i].roomName == name) {
+            return true
+        }
+    }
+    return false;
+}
+
 #endif
