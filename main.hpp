@@ -226,25 +226,25 @@ Creature* setCreature(xml_node<>* highNode)
 }
 
 Room* searchRoom(string name, vector <Room*> rooms) {
-    for(int i = 0; i <= rooms.size(); i++) {
+    for(int i = 0; i < rooms.size(); i++) {
         if (name == rooms[i]->name) {
             return rooms[i];
         }
     }
-    return 0;
+    return NULL;
 }
 
 Container* searchContainer(string name, vector <Container*> conts) {
-    for(int i = 0; i <= conts.size(); i++) {
+    for(int i = 0; i < conts.size(); i++) {
         if (name == conts[i]->name) {
             return conts[i];
         }
     }
-    return 0;
+    return NULL;
 }
 
 Item* searchItem(string name, vector <Item*> items) {
-    for(int i = 0; i <= items.size(); i++) {
+    for(int i = 0; i < items.size(); i++) {
         if (name == items[i]->name) {
             return items[i];
         }
@@ -253,7 +253,7 @@ Item* searchItem(string name, vector <Item*> items) {
 }
 
 int searchItemIndex(Item* item, vector <Item*> items) {
-    for(int i = 0; i <= items.size(); i++) {
+    for(int i = 0; i < items.size(); i++) {
         if (item == items[i]) {
             return i;
         }
@@ -262,12 +262,12 @@ int searchItemIndex(Item* item, vector <Item*> items) {
 }
 
 Creature* searchCreature(string name, vector <Creature*> creatures) {
-    for(int i = 0; i <= creatures.size(); i++) {
+    for(int i = 0; i < creatures.size(); i++) {
         if (name == creatures[i]->name) {
             return creatures[i];
         }
     }
-    return 0;
+    return NULL;
 }
 
 void setRoomVectors(Room* room, vector <Item*> items, vector <Container*> conts, vector <Creature*> creatures, vector <Room*> rooms) {
@@ -296,7 +296,7 @@ void setRoomVectors(Room* room, vector <Item*> items, vector <Container*> conts,
     }
 }
 
-bool findTrigger(string input, Player* player)
+bool findTrigger(string input, Player* player, vector<Item*> itemsVec, vector<Creature*> creatureVec)
 {
     int len = input.length();
     if (len == 1)
@@ -313,34 +313,34 @@ bool findTrigger(string input, Player* player)
                 }
                 else if (!(player -> currentRoom -> searchBorder("north")))
                     cout << "Can't go that way." << endl;
-                return false;
+                break;
             case 115:
                 if (player -> currentRoom -> searchBorder("south"))
                 {
-                    player -> currentRoom = player -> currentRoom -> north;
+                    player -> currentRoom = player -> currentRoom -> south;
                     cout << player -> currentRoom -> description << endl;
                 }
                 else if (!(player -> currentRoom -> searchBorder("south")))
                     cout << "Can't go that way." << endl;
-                 return false;
+                 break;
             case 101:
                 if (player -> currentRoom -> searchBorder("east"))
                 {
-                    player -> currentRoom = player -> currentRoom -> north;
+                    player -> currentRoom = player -> currentRoom -> east;
                     cout << player -> currentRoom -> description << endl;
                 }
                 else if (!(player -> currentRoom -> searchBorder("east")))
                     cout << "Can't go that way." << endl;
-                return false;
+                break;
             case 119:
                 if (player -> currentRoom -> searchBorder("west"))
                 {
-                    player -> currentRoom = player -> currentRoom -> north;
+                    player -> currentRoom = player -> currentRoom -> west;
                     cout << player -> currentRoom -> description << endl;
                 }
                 else if (!(player -> currentRoom -> searchBorder("west")))
                     cout << "Can't go that way." << endl;
-                return false;
+                break;
             case 105:
                 cout << "Inventory: ";
                 if (player -> inventory.size() == 0)
@@ -358,27 +358,207 @@ bool findTrigger(string input, Player* player)
                             cout << endl;
                     }
                 }
-                return false;
+                break;
             default:
                 cout << "Error" << endl;
-                return false;
+                break;
         }
     }
     
-    if(input.find("take") != -1)
-    {
-        Item* item = searchItem(input.substr(5), player -> currentRoom -> items);
-
-        if (item != NULL)
+    else if(input.find("take") != -1)
+    {   
+        if (len < 5)
         {
-            player -> inventory.push_back(item);
-            player -> currentRoom -> items.erase(searchItemIndex(item, player -> currentRoom -> items));
-            cout << "Item " << item -> name << " added to inventory." << endl;
+            cout << "Error" << endl;
+            return false;
+        }
+
+        Item* inR = searchItem(input.substr(5), player -> currentRoom -> items);
+        Item* inC = NULL;
+        int index1;
+        int index2;
+        for(int i = 0; i < player -> currentRoom -> cont.size(); i++)
+        {
+            inC = searchItem(input.substr(5), player -> currentRoom -> cont[i] -> items);
+            index2 = searchItemIndex(inC, player -> currentRoom -> cont[i] -> items);
+            if (inC != NULL)
+            {
+                index1 = i;
+                break;
+            }
+                
+        }
+
+        if (inR != NULL)
+        {
+            player -> inventory.push_back(inR);
+            player -> currentRoom -> items.erase(player -> currentRoom -> items.begin() + searchItemIndex(inR, player -> currentRoom -> items));
+            cout << "Item " << inR -> name << " added to inventory." << endl;
+            inR = NULL;
+        }
+        else if(inC != NULL)
+        {
+            player -> inventory.push_back(inC);
+            player -> currentRoom -> cont[index1] -> items.erase(player -> currentRoom -> cont[index1] -> items.begin() + index2);
+            cout << "Item " << inC -> name << " added to inventory." << endl;
+            inC = NULL;
         }
         else
             cout << "Error" << endl;
         
         return false;
+    }
+
+    else if(input.find("read") != -1)
+    {
+        if (len < 5)
+        {
+            cout << "Error" << endl;
+            return false;
+        }
+        Item* item = searchItem(input.substr(5), player -> inventory);
+
+        if(item != NULL)
+            cout << item -> description << endl;
+        else
+            cout << "Error" << endl;
+    }
+
+    else if(input.find("turn on") != -1)
+    {
+        if (len < 8)
+        {
+            cout << "Error" << endl;
+            return false;
+        }
+        Item* item = searchItem(input.substr(8), player -> inventory);
+
+        if (item != NULL)
+        {
+            cout << "You activate the " << item -> name << '.' << endl;
+            cout << item -> turn.print << endl;
+            int index = item -> turn.action.find("to ");
+            item -> setStatus(item -> turn.action.substr(index + 3));
+        }
+    }
+
+    else if(input.find("open") != -1)
+    {
+        if (len < 5)
+        {
+            cout << "Error" << endl;
+            return false;
+        }
+
+        Container* con = searchContainer(input.substr(5), player -> currentRoom -> cont);
+
+        if(con != NULL)
+        {
+            if (con -> items.size() == 0)
+                cout << con -> name << " is empty." << endl;
+            else
+            {
+                cout << con -> name << " contains ";
+                for(int i=0; i < con -> items.size(); i++)
+                {
+                    cout << con -> items[i] -> name;
+                    if (i+1 < con -> items.size())
+                        cout << ", ";
+                    else
+                        cout << '.' << endl;
+                }
+            }
+        }
+        else
+            cout << "Error" << endl;
+    }
+
+    else if(input.find("attack") != -1)
+    {
+        int index = input.find("with");
+        if(index == -1 || len < 11)
+        {
+            cout << "Error" << endl;
+            return false;
+        }
+
+        Creature* tempC = searchCreature(input.substr(7, index-2 - 6), player -> currentRoom -> creatures);
+        Item* weapon = searchItem(input.substr(index + 5), player -> inventory);
+
+        if(tempC == NULL || weapon == NULL)
+        {
+            cout << "Error" << endl;
+            return false;
+        }
+
+        for(int j = 0; j < tempC -> vulnerability.size(); j++)
+        {
+            if (weapon -> name == tempC -> vulnerability[j])
+            {
+                if(weapon -> status == tempC -> attack ->status)
+                {
+                    cout << tempC -> attack->print << endl;
+                    for (int i = 0; i < tempC -> attack ->actions.size(); i++)
+                    {
+                        string act = tempC -> attack->actions[i];
+                        if (act.find("Add") != -1)
+                        {
+                            index = act.find("to ");
+                            Item* add = searchItem(act.substr(4, index - 2 - 4), itemsVec);
+
+                            string room = act.substr(index + 4);
+                            if (room == player -> currentRoom -> name)
+                                player -> currentRoom -> items.push_back(add);
+                            else
+                            {
+                                Container* tempC = searchContainer(room, player -> currentRoom -> cont);
+                                tempC -> items.push_back(add);
+                            }
+
+                        }
+                    }
+                }
+                else
+                    cout << "Error" << endl;
+            }
+        }
+
+    }
+
+    else
+    {
+        cout << "Error" << endl;
+        return false;
+    }
+
+    for(int i = 0; i < player -> currentRoom -> creatures.size(); i++)
+    {
+        Creature* tempC = player -> currentRoom -> creatures[i];
+        for(int j = 0; j < tempC -> trig.size(); j++)
+        {
+            Trigger* tempT = tempC -> trig[j];
+            if(tempT -> type == "single" && tempT -> singleOn)
+                break;
+            Item* object;
+
+            if (tempT -> owner.size() != 0 && tempT -> owner != "inventory")
+            {
+                Container* con = searchContainer(tempT -> owner, player -> currentRoom -> cont);
+                object = searchItem(tempT -> object, con -> items);
+            }
+            else
+                object = searchItem(tempT -> object, player -> inventory);
+
+            if (tempT -> status.length() != 0)
+            {
+                if(tempT -> status == object -> status)
+                {   
+                    cout << tempT -> print << endl;
+                    tempT -> singleOn = true;
+                    break;
+                }
+            }
+        }
     }
 
     return false;

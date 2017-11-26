@@ -33,26 +33,28 @@ public:
     void setType(string _type)   { type = _type;         }
     void setStatus(string stat)  { status = stat;        } 
     Border setBorder(xml_node<>* temp); 
+    bool searchBorder(string name);
 };
 
 Border Room :: setBorder(xml_node<>* temp)
 {
-    temp = temp -> first_node();
+    xml_node<>* temp2 = temp -> first_node();
     Border b;
-    while(temp != NULL)
+    while(temp2 != NULL)
     {
-        if ( ! strcmp(temp -> name(), "direction") )
-            b.direction = temp -> value();
-        else if ( ! strcmp(temp -> name(), "name") )
-            b.roomName = temp -> value();
+        if ( ! strcmp(temp2 -> name(), "direction") )
+            b.direction = temp2 -> value();
+        else if ( ! strcmp(temp2 -> name(), "name") )
+            b.roomName = temp2 -> value();
+        temp2 = temp2 -> next_sibling();
     }
     return b;
 }
 
 bool Room :: searchBorder(string name) {
     for(int i= 0; i < borders.size(); i++) {
-        if(borders[i].roomName == name) {
-            return true
+        if(borders[i].direction == name) {
+            return true;
         }
     }
     return false;
