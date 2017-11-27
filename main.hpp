@@ -504,9 +504,12 @@ bool findTrigger(string input, Player* player, vector<Item*> itemsVec, vector<Cr
                         if (act.find("Add") != -1)
                         {
                             index = act.find("to ");
-                            Item* add = searchItem(act.substr(4, index - 2 - 4), itemsVec);
-
-                            string room = act.substr(index + 4);
+                            Item* add = searchItem(act.substr(4, index - 2 - 3), itemsVec);
+                            cout << add -> name << endl;
+                            
+                            
+                            string room = act.substr(index + 3);
+                            cout << room << endl;
                             if (room == player -> currentRoom -> name)
                                 player -> currentRoom -> items.push_back(add);
                             else
