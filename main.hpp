@@ -437,8 +437,11 @@ bool findTrigger(string input, Player* player, vector<Item*> itemsVec, vector<Cr
         {
             cout << "You activate the " << item -> name << '.' << endl;
             cout << item -> turn.print << endl;
-            int index = item -> turn.action.find("to ");
-            item -> setStatus(item -> turn.action.substr(index + 3));
+            if (item -> turn.action.find("Update") != -1)
+            {
+                int index = item -> turn.action.find("to ");
+                item -> setStatus(item -> turn.action.substr(index + 3));
+            }
         }
     }
 
@@ -451,8 +454,13 @@ bool findTrigger(string input, Player* player, vector<Item*> itemsVec, vector<Cr
         }
 
         Container* con = searchContainer(input.substr(5), player -> currentRoom -> cont);
-
-        if(con != NULL)
+        
+        if (player -> currentRoom -> type == "exit" & input.substr(5) == "exit")
+        {
+            cout << "Game Over" << endl;
+            return true;
+        }
+        else if(con != NULL)
         {
             if (con -> items.size() == 0)
                 cout << con -> name << " is empty." << endl;
@@ -473,6 +481,44 @@ bool findTrigger(string input, Player* player, vector<Item*> itemsVec, vector<Cr
             cout << "Error" << endl;
     }
 
+    else if(input.find("put") != -1) 
+    {
+        Item* put = searchItem(input.substr(4, input.find("in") - 5), player->inventory);
+        Container* con = searchContainer(input.substr(input.find("in")+3), player->currentRoom->cont);
+        con->items.push_back(put);
+        cout<<"Item "<<put->name<< " added to " << con->name <<"."<<endl;
+
+        for(int i = 0; i < con -> trig.size(); i++)
+        {
+            Trigger* temp = con -> trig[i];
+            for (int j = 0; j < con -> items.size(); j++)
+            {
+                if ((temp -> object == con -> items[j] -> name) && temp -> has == "yes")
+                {
+                    cout << temp -> print << endl;
+                    for(int k = 0; k < temp -> actions.size(); k++)
+                    {
+                        if (temp ->actions[k].find("Update") != -1)
+                        {
+                            int index = temp->actions[k].find("to ");
+                            con -> setStatus(temp->actions[k].substr(index + 3));
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    else if(input.find("drop") != -1) 
+    {
+        Item* drop = searchItem(input.substr(5), player->inventory);
+        player->currentRoom->items.push_back(drop);
+        player -> inventory.erase(player -> inventory.begin() + searchItemIndex(drop, player -> inventory));
+        cout<<drop->name<< " dropped."<<endl;
+
+    }
+
     else if(input.find("attack") != -1)
     {
         int index = input.find("with");
@@ -491,12 +537,14 @@ bool findTrigger(string input, Player* player, vector<Item*> itemsVec, vector<Cr
             return false;
         }
 
+        bool vulnerable = false;
         for(int j = 0; j < tempC -> vulnerability.size(); j++)
         {
             if (weapon -> name == tempC -> vulnerability[j])
             {
                 if(weapon -> status == tempC -> attack ->status)
                 {
+                    vulnerable = true;
                     cout << tempC -> attack->print << endl;
                     for (int i = 0; i < tempC -> attack ->actions.size(); i++)
                     {
@@ -505,11 +553,8 @@ bool findTrigger(string input, Player* player, vector<Item*> itemsVec, vector<Cr
                         {
                             index = act.find("to ");
                             Item* add = searchItem(act.substr(4, index - 2 - 3), itemsVec);
-                            cout << add -> name << endl;
-                            
                             
                             string room = act.substr(index + 3);
-                            cout << room << endl;
                             if (room == player -> currentRoom -> name)
                                 player -> currentRoom -> items.push_back(add);
                             else
@@ -521,18 +566,15 @@ bool findTrigger(string input, Player* player, vector<Item*> itemsVec, vector<Cr
                         }
                     }
                 }
-                else
-                    cout << "Error" << endl;
             }
         }
-
+        if (!vulnerable)
+            cout << "Error" << endl;
     }
 
     else
-    {
         cout << "Error" << endl;
-        return false;
-    }
+
 
     for(int i = 0; i < player -> currentRoom -> creatures.size(); i++)
     {

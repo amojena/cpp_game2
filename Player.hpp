@@ -34,6 +34,14 @@ bool Player :: leaveRoom(string input)
                         return true;
                 }
             }
+            for(int j = 0; j < currentRoom -> cont.size(); j++)
+            {
+                if(currentRoom -> cont[j] -> name == temp -> object)
+                {
+                    if(currentRoom -> cont[j] -> status != temp -> status)
+                        return true;
+                }
+            }
             cout << temp -> print << endl;
             return false;
         }
