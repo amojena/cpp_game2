@@ -10,6 +10,7 @@
 #include "Room.hpp"
 #include "Trigger.hpp"
 #include "Main.hpp"
+#include "Player.hpp"
 
 using namespace std;
 using namespace rapidxml;
@@ -41,8 +42,7 @@ int main ()
 
     while (node != NULL)
     {
-        temp_node = node -> first_node(); 
-        cout << "NODE NAME: " << node -> name() << endl;
+        temp_node = node -> first_node();
         
         if ( ! strcmp(node -> name(), "container")  ) {
             containers.push_back(setContainer(node));
@@ -58,27 +58,25 @@ int main ()
             creatures.push_back(setCreature(node));
                 
         node = node -> next_sibling();
-        cout << endl;
-    }
-
-    for(int i = 0; i <= containers.size(); i++) {
-        cout<<rooms[i]->name << endl;
     }
 
     for(int i = 0; i < rooms.size(); i++) {
-        setRoomVectors(rooms[i], items, containers, creatures);
+        setRoomVectors(rooms[i], items, containers, creatures, rooms);
     }
 
     //start game
     Player* player = new Player();
     player -> setRoom(searchRoom("Entrance", rooms));
-    cout << player ->  currentRoom -> name << endl;
+    cout << player ->  currentRoom -> description << endl;
+    bool gameOver = false;
+    string input;
 
-    cout<<rooms[1]->cont[0]->items[0]->name<<endl;
-    cout << "rooms: " << rooms.size() << endl;
-    cout << "items: " << items.size() << endl;
-    cout << "conts: " << containers.size() << endl;
-    cout << "creat: " << creatures.size() << endl;
+    while (!gameOver)
+    {
+        getline(cin, input);
+        gameOver = findTrigger(input, player, items, creatures);
+    }
+
     return 0;
 }
 
